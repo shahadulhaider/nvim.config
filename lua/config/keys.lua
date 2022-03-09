@@ -186,13 +186,15 @@ local leader = {
   },
   o = {
     name = "+open",
-    p = { "<cmd>MarkdownPreview<cr>", "Markdown Preview" },
+    m = { "<cmd>MarkdownPreview<cr>", "Markdown Preview" },
+    p = { "<cmd>NvimTreeFindFile<cr>", "Find file in tree" },
+    P = { "<cmd>NvimTreeToggle<cr>", "Open File tree" },
   },
   p = {
     name = "+project",
     p = "Open Project",
     b = {
-      ":Telescope file_browser cwd=~/workspace<CR>",
+      ":Telescope find_files cwd=~/Code/<CR>",
       "Browse ~/workspace",
     },
   },

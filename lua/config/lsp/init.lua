@@ -49,7 +49,7 @@ local servers = {
   sumneko_lua = require("lua-dev").setup({
     lspconfig = {
       cmd = {
-        util.cache_dir .. "lua-language-server/bin/macOS/lua-language-server",
+        util.cache_dir .. "lua-language-server/bin/lua-language-server",
         "-E",
         util.cache_dir .. "lua-language-server/main.lua",
       },
@@ -57,7 +57,6 @@ local servers = {
   }),
   vimls = {},
   terraformls = {},
-  taplo = {},
   yamlls = {},
 }
 
