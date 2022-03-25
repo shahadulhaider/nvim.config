@@ -52,6 +52,7 @@ cmp.setup({
     { name = "crates" },
     { name = "calc" },
     { name = "emoji" },
+    { name = "npm", keyword_length = 4 },
   },
   experimental = {
     ghost_text = {

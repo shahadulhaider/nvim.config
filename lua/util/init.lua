@@ -36,6 +36,14 @@ function M.execute(id)
   return func()
 end
 
+function M.mkdir()
+  local dir = vim.fn.expand("<afile>:p:h")
+
+  if vim.fn.isdirectory(dir) == 0 then
+    vim.fn.mkdir(dir, "p")
+  end
+end
+
 local map = function(mode, key, cmd, opts, defaults)
   opts = vim.tbl_deep_extend(
     "force",

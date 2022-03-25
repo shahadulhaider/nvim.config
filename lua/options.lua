@@ -40,6 +40,7 @@ vim.opt.updatetime = 200 -- save swap file and trigger CursorHold
 vim.opt.wildmode = "longest:full,full" -- Command-line completion mode
 vim.opt.wrap = true -- Enable line wrap
 vim.opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize" }
+vim.opt.foldmethod = "syntax"
 vim.opt.formatoptions = vim.opt.formatoptions
   - "a" -- Auto formatting is BAD.
   - "t" -- Don't auto format my code. I got linters for that.
@@ -91,3 +92,10 @@ cmd(
   [[autocmd FileType help,startuptime,qf,lspinfo,spectre_panel nnoremap <buffer><silent> q :close<CR>]]
 )
 cmd([[autocmd FileType man nnoremap <buffer><silent> q :quit<CR>]])
+
+cmd([[
+  augroup MkdirRun
+  autocmd!
+  autocmd BufWritePre * lua require("util").mkdir()
+  augroup END
+]])

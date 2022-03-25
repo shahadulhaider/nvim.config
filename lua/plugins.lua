@@ -22,6 +22,7 @@ local function plugins(use)
   -- Packer can manage itself as an optional plugin
   use({ "wbthomason/packer.nvim", opt = true })
 
+  -- notification
   use({
     "rcarriga/nvim-notify",
     event = "BufRead",
@@ -68,6 +69,7 @@ local function plugins(use)
     },
   })
 
+  -- completion
   use({
     "hrsh7th/nvim-cmp",
     event = "InsertEnter",
@@ -85,6 +87,7 @@ local function plugins(use)
       "hrsh7th/cmp-calc",
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-nvim-lsp",
+      "David-Kunz/cmp-npm",
       -- "hrsh7th/cmp-copilot",
       -- "github/copilot.vim",
       {
@@ -158,6 +161,18 @@ local function plugins(use)
     end,
   })
 
+  -- Statusline
+  use({
+    "famiu/feline.nvim",
+    event = "VimEnter",
+    config = function()
+      require("config.feline")
+    end,
+    wants = {
+      "nvim-web-devicons",
+    },
+  })
+
   -- Theme: colors
   use({
     "folke/tokyonight.nvim",
@@ -219,7 +234,17 @@ local function plugins(use)
     end,
   })
 
+  use({
+    "ahmedkhalf/project.nvim",
+    config = function()
+      require("config.project")
+    end,
+  })
   -- Fuzzy finder
+  use({
+    "ibhagwan/fzf-lua",
+    requires = { "kyazdani42/nvim-web-devicons" },
+  })
   use({
     "nvim-telescope/telescope.nvim",
     opt = true,
@@ -255,6 +280,15 @@ local function plugins(use)
     event = "BufReadPre",
     config = function()
       require("config.blankline")
+    end,
+  })
+
+  --folds
+  use({
+    "anuvyklack/pretty-fold.nvim",
+    config = function()
+      require("pretty-fold").setup({})
+      require("pretty-fold.preview").setup()
     end,
   })
 
@@ -337,16 +371,7 @@ local function plugins(use)
       require("config.neogit")
     end,
   })
-
-  -- Statusline
-  use({
-    "famiu/feline.nvim",
-    event = "VimEnter",
-    config = function()
-      require("config.feline")
-    end,
-    wants = "nvim-web-devicons",
-  })
+  use({ "f-person/git-blame.nvim" })
 
   use({
     "norcalli/nvim-colorizer.lua",
@@ -368,13 +393,13 @@ local function plugins(use)
 
   use({
     "phaazon/hop.nvim",
-    keys = { "gh" },
-    cmd = { "HopWord", "HopLine" },
+    -- keys = { "gh" },
+    -- cmd = { "HopWord", "HopLine" },
     config = function()
-      require("util").nmap("gh", "<cmd>HopWord<CR>")
-      require("util").nmap("gl", "<cmd>HopLine<CR>")
+      -- require("util").nmap("gh", "<cmd>HopWord<CR>")
+      -- require("util").nmap("gl", "<cmd>HopLine<CR>")
+      require("config.hop")
       -- you can configure Hop the way you like here; see :h hop-config
-      require("hop").setup({})
     end,
   })
 

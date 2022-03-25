@@ -1,5 +1,6 @@
 local vi_mode_utils = require("feline.providers.vi_mode")
 local theme_colors = require("tokyonight.colors").setup()
+local gps = require("nvim-gps")
 
 local colors = {
   bg = theme_colors.bg_dark,
@@ -79,6 +80,14 @@ components.active[1] = {
     },
   },
   {
+    provider = function()
+      return gps.get_location()
+    end,
+    enabled = function()
+      return gps.is_available()
+    end,
+  },
+  {
     provider = "file_size",
     right_sep = {
       " ",
@@ -150,6 +159,31 @@ components.active[2] = {
     },
   },
   {
+    provider = "file_type",
+    hl = {
+      fg = "fg",
+      bg = "bg",
+      style = "bold",
+    },
+    left_sep = {
+      str = " ",
+      hl = {
+        fg = "NONE",
+        bg = "bg",
+      },
+    },
+    right_sep = {
+      {
+        str = " ",
+        hl = {
+          fg = "NONE",
+          bg = "bg",
+        },
+      },
+      " ",
+    },
+  },
+  {
     provider = "line_percentage",
     hl = {
       style = "bold",
@@ -167,31 +201,6 @@ components.active[2] = {
 }
 
 components.inactive[1] = {
-  {
-    provider = "file_type",
-    hl = {
-      fg = "white",
-      bg = "oceanblue",
-      style = "bold",
-    },
-    left_sep = {
-      str = " ",
-      hl = {
-        fg = "NONE",
-        bg = "oceanblue",
-      },
-    },
-    right_sep = {
-      {
-        str = " ",
-        hl = {
-          fg = "NONE",
-          bg = "oceanblue",
-        },
-      },
-      " ",
-    },
-  },
   -- Empty component to fix the highlight till the end of the statusline
   {},
 }

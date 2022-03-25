@@ -186,6 +186,7 @@ local leader = {
   },
   o = {
     name = "+open",
+    e = { "<cmd>edit .<cr>", "Open file explorer" },
     m = { "<cmd>MarkdownPreview<cr>", "Markdown Preview" },
     p = { "<cmd>NvimTreeFindFile<cr>", "Find file in tree" },
     P = { "<cmd>NvimTreeToggle<cr>", "Open File tree" },
