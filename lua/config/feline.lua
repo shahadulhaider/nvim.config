@@ -1,6 +1,5 @@
 local vi_mode_utils = require("feline.providers.vi_mode")
 local theme_colors = require("tokyonight.colors").setup()
-local gps = require("nvim-gps")
 
 local colors = {
   bg = theme_colors.bg_dark,
@@ -78,14 +77,6 @@ components.active[1] = {
       "slant_right_2",
       " ",
     },
-  },
-  {
-    provider = function()
-      return gps.get_location()
-    end,
-    enabled = function()
-      return gps.is_available()
-    end,
   },
   {
     provider = "file_size",

@@ -49,9 +49,9 @@ local servers = {
   sumneko_lua = require("lua-dev").setup({
     lspconfig = {
       cmd = {
-        util.cache_dir .. "lua-language-server/bin/lua-language-server",
+        "/usr/lib/lua-language-server/bin/lua-language-server",
         "-E",
-        util.cache_dir .. "lua-language-server/main.lua",
+        "/usr/lib/lua-language-server/main.lua",
       },
     },
   }),
