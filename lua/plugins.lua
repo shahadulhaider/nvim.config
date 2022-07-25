@@ -108,12 +108,12 @@ local function plugins(use)
       "David-Kunz/cmp-npm",
       -- "hrsh7th/cmp-copilot",
       -- "github/copilot.vim",
-      {
-        "saecki/crates.nvim",
-        config = function()
-          require("crates").setup()
-        end,
-      },
+      -- {
+      --   "saecki/crates.nvim",
+      --   config = function()
+      --     require("crates").setup()
+      --   end,
+      -- },
       {
         "L3MON4D3/LuaSnip",
         wants = "friendly-snippets",
@@ -180,7 +180,7 @@ local function plugins(use)
     wants = "nvim-ts-context-commentstring",
     keys = { "gc", "gcc" },
     config = function()
-      require("config.comments")
+      require("config.comments").setup()
     end,
     requires = "JoosepAlviste/nvim-ts-context-commentstring",
   })
@@ -192,6 +192,8 @@ local function plugins(use)
       require("config.theme")
     end,
   })
+
+  use("lewpoly/sherbet.nvim")
 
   -- Theme: icons
   use({
@@ -217,7 +219,6 @@ local function plugins(use)
   -- Statusline
   use({
     "feline-nvim/feline.nvim",
-    branch = "0.5-compat",
     config = function()
       require("config.feline").setup()
     end,
