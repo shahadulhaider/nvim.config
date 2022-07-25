@@ -93,6 +93,7 @@ local leader = {
     name = "+windows",
     ["w"] = { "<C-W>p", "other-window" },
     ["d"] = { "<C-W>c", "delete-window" },
+    ["c"] = { "<C-W>c", "delete-window" },
     ["-"] = { "<C-W>s", "split-window-below" },
     ["|"] = { "<C-W>v", "split-window-right" },
     ["2"] = { "<C-W>v", "layout-double-columns" },
@@ -258,6 +259,13 @@ local leader = {
       [[<cmd>lua require("persistence").stop()<cr>]],
       "Stop Current Session",
     },
+  },
+  l = {
+    name = "+{qf,loc}list",
+    l = { "<cmd>QFToggle!<CR>", "Toggle qf list" },
+    l = { "<cmd>LLToggle!<CR>", "Toggle loc list" },
+    n = { "<cmd>QNext<CR>", "Next item on the qf/loc list" },
+    p = { "<cmd>QPrev<CR>", "Prev item on the qf/loc list" },
   },
   x = {
     name = "+errors",

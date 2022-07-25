@@ -5,20 +5,22 @@ local config = {
     enable = false,
     threshold = 0, -- the amount in ms that a plugins load time must be over for it to be included in the profile
   },
-  display = {
-    open_fn = function()
-      return require("packer.util").float({ border = "single" })
-    end,
-  },
-  -- list of plugins that should be taken from ~/workspace
-  -- this is NOT packer functionality!
-  -- local_plugins = {
-  --   kwigley = true,
-  --   ["null-ls.nvim"] = true,
+  -- display = {
+  --   open_fn = function()
+  --     return require("packer.util").float({ border = "single" })
+  --   end,
   -- },
 }
 
 local function plugins(use)
+  -- common modules used by plugins
+  use({ "nvim-lua/plenary.nvim", module = "plenary" })
+  use({ "nvim-lua/popup.nvim", module = "popup" })
+
+  -- improve startup time
+  use({ "lewis6991/impatient.nvim" })
+  use({ "nathom/filetype.nvim" })
+
   -- Packer can manage itself as an optional plugin
   use({ "wbthomason/packer.nvim", opt = true })
 
@@ -44,6 +46,12 @@ local function plugins(use)
       require("config.lsp")
     end,
     requires = {
+      {
+        "SmiteshP/nvim-navic",
+        config = function()
+          require("config.navic").setup()
+        end,
+      },
       "simrat39/rust-tools.nvim",
       "mfussenegger/nvim-dap",
       "mattn/webapi-vim",
@@ -52,21 +60,31 @@ local function plugins(use)
       "folke/lua-dev.nvim",
       "hrsh7th/cmp-nvim-lsp",
       "b0o/schemastore.nvim",
+      "ray-x/lsp_signature.nvim",
       {
         "kosayoda/nvim-lightbulb",
         config = function()
-          vim.cmd(
-            [[autocmd CursorHold,CursorHoldI * lua require'nvim-lightbulb'.update_lightbulb()]]
-          )
+          require("config.lightbulb").setup()
         end,
       },
       {
         "j-hui/fidget.nvim",
         config = function()
-          require("fidget").setup({ text = { spinner = "dots" } })
+          require("config.fidget").setup()
         end,
       },
     },
+  })
+
+  -- LSP ui
+  use({
+    "folke/trouble.nvim",
+    event = "BufReadPre",
+    wants = "nvim-web-devicons",
+    cmd = { "TroubleToggle", "Trouble" },
+    config = function()
+      require("config.trouble").setup()
+    end,
   })
 
   -- completion
@@ -75,7 +93,7 @@ local function plugins(use)
     event = "InsertEnter",
     opt = true,
     config = function()
-      require("config.cmp")
+      require("config.cmp").setup()
     end,
     wants = { "tabout.nvim", "LuaSnip", "nvim-autopairs", "plenary.nvim" },
     requires = {
@@ -100,7 +118,7 @@ local function plugins(use)
         "L3MON4D3/LuaSnip",
         wants = "friendly-snippets",
         config = function()
-          require("config.luasnip")
+          require("config.luasnip").setup()
         end,
       },
       "rafamadriz/friendly-snippets",
@@ -114,35 +132,21 @@ local function plugins(use)
       {
         "windwp/nvim-autopairs",
         config = function()
-          require("config.autopairs")
+          require("config.autopairs").setup()
         end,
       },
     },
   })
 
+  -- surround selections
   use({
-    "alvan/vim-closetag",
+    "kylechui/nvim-surround",
     config = function()
-      require("config.closetag")
+      require("config.surround").setup()
     end,
   })
 
-  use({
-    "simrat39/symbols-outline.nvim",
-    cmd = { "SymbolsOutline" },
-  })
-
-  use({
-    "numToStr/Comment.nvim",
-    opt = true,
-    wants = "nvim-ts-context-commentstring",
-    keys = { "gc", "gcc" },
-    config = function()
-      require("config.comments")
-    end,
-    requires = "JoosepAlviste/nvim-ts-context-commentstring",
-  })
-
+  -- treesitter
   use({
     "nvim-treesitter/nvim-treesitter",
     run = ":TSUpdate",
@@ -155,22 +159,30 @@ local function plugins(use)
       },
       "nvim-treesitter/nvim-treesitter-textobjects",
       "RRethy/nvim-treesitter-textsubjects",
+      "windwp/nvim-ts-autotag",
     },
     config = function()
-      require("config.treesitter")
+      require("config.treesitter").setup()
     end,
   })
 
-  -- Statusline
   use({
-    "famiu/feline.nvim",
-    event = "VimEnter",
+    "AckslD/nvim-trevJ.lua",
+    wants = { "nvim-treesitter" },
     config = function()
-      require("config.feline")
+      require("config.trevj").setup()
     end,
-    wants = {
-      "nvim-web-devicons",
-    },
+  })
+
+  use({
+    "numToStr/Comment.nvim",
+    opt = true,
+    wants = "nvim-ts-context-commentstring",
+    keys = { "gc", "gcc" },
+    config = function()
+      require("config.comments")
+    end,
+    requires = "JoosepAlviste/nvim-ts-context-commentstring",
   })
 
   -- Theme: colors
@@ -186,28 +198,40 @@ local function plugins(use)
     "kyazdani42/nvim-web-devicons",
     module = "nvim-web-devicons",
     config = function()
-      require("nvim-web-devicons").setup({
-        override = {
-          lir_folder_icon = {
-            icon = "",
-            color = "#7ebae4",
-            name = "LirFolderNode",
-          },
-        },
-        default = true,
-      })
+      require("config.devicons").setup()
     end,
   })
 
   use({
+    "alvan/vim-closetag",
+    config = function()
+      require("config.closetag")
+    end,
+  })
+
+  use({
+    "simrat39/symbols-outline.nvim",
+    cmd = { "SymbolsOutline" },
+  })
+
+  -- Statusline
+  use({
+    "feline-nvim/feline.nvim",
+    branch = "0.5-compat",
+    config = function()
+      require("config.feline").setup()
+    end,
+    wants = "nvim-web-devicons",
+  })
+
+  -- terminal
+  use({
     "norcalli/nvim-terminal.lua",
     ft = "terminal",
     config = function()
-      require("terminal").setup()
+      require("config.terminal").setup()
     end,
   })
-  use({ "nvim-lua/plenary.nvim", module = "plenary" })
-  use({ "nvim-lua/popup.nvim", module = "popup" })
 
   use({
     "windwp/nvim-spectre",
@@ -217,12 +241,13 @@ local function plugins(use)
     requires = { "nvim-lua/popup.nvim", "nvim-lua/plenary.nvim" },
   })
 
+  -- files
   use({
     "tamago324/lir.nvim",
     wants = { "nvim-web-devicons", "plenary.nvim", "lir-git-status.nvim" },
     requires = { "nvim-lua/plenary.nvim", "tamago324/lir-git-status.nvim" },
     config = function()
-      require("config.lir")
+      require("config.lir").setup()
     end,
   })
 
@@ -230,7 +255,7 @@ local function plugins(use)
     "kyazdani42/nvim-tree.lua",
     cmd = { "NvimTreeToggle", "NvimTreeClose", "NvimTreeFindFile" },
     config = function()
-      require("config.tree")
+      require("config.tree").setup()
     end,
   })
 
@@ -249,7 +274,7 @@ local function plugins(use)
     "nvim-telescope/telescope.nvim",
     opt = true,
     config = function()
-      require("config.telescope")
+      require("config.telescope").setup()
     end,
     cmd = { "Telescope" },
     keys = { "<leader><space>", "<leader>fd" },
@@ -279,27 +304,34 @@ local function plugins(use)
     "lukas-reineke/indent-blankline.nvim",
     event = "BufReadPre",
     config = function()
-      require("config.blankline")
+      require("config.blankline").setup()
     end,
   })
 
   --folds
   use({
     "anuvyklack/pretty-fold.nvim",
-    requires = 'anuvyklack/nvim-keymap-amend',-- only for preview
     config = function()
-      require("pretty-fold").setup({})
-      require("pretty-fold.preview").setup()
+      require("pretty-fold").setup()
+    end,
+  })
+
+  use({
+    "anuvyklack/fold-preview.nvim", -- only for preview
+    requires = "anuvyklack/nvim-keymap-amend", -- only for preview
+    config = function()
+      require("fold-preview").setup()
     end,
   })
 
   -- Tabs
   use({
     "akinsho/nvim-bufferline.lua",
+    tag = "v2.*",
     event = "BufReadPre",
     wants = "nvim-web-devicons",
     config = function()
-      require("config.bufferline")
+      require("config.bufferline").setup()
     end,
   })
   use({
@@ -310,9 +342,10 @@ local function plugins(use)
   -- Terminal
   use({
     "akinsho/nvim-toggleterm.lua",
+    tag = "v2.*",
     keys = "<F12>",
     config = function()
-      require("config.terminal")
+      require("config.toggleterm").setup()
     end,
   })
 
@@ -321,16 +354,16 @@ local function plugins(use)
     "karb94/neoscroll.nvim",
     keys = { "<C-u>", "<C-d>", "gg", "G" },
     config = function()
-      require("config.scroll")
+      require("config.scroll").setup()
     end,
   })
-  use({
-    "edluffy/specs.nvim",
-    after = "neoscroll.nvim",
-    config = function()
-      require("config.specs")
-    end,
-  })
+  -- use({
+  --   "edluffy/specs.nvim",
+  --   after = "neoscroll.nvim",
+  --   config = function()
+  --     require("config.specs")
+  --   end,
+  -- })
 
   -- Git
   use({
@@ -339,7 +372,7 @@ local function plugins(use)
     wants = "plenary.nvim",
     requires = { "nvim-lua/plenary.nvim" },
     config = function()
-      require("config.gitsigns")
+      require("config.gitsigns").setup()
     end,
   })
   use({
@@ -347,7 +380,7 @@ local function plugins(use)
     wants = "plenary.nvim",
     requires = "nvim-lua/plenary.nvim",
     config = function()
-      require("config.gitlinker")
+      require("config.gitlinker").setup()
     end,
   })
 
@@ -362,25 +395,25 @@ local function plugins(use)
       {
         "sindrets/diffview.nvim",
         config = function()
-          require("diffview").setup({})
+          require("config.diffview").setup()
         end,
         after = "plenary.nvim",
       },
       "nvim-lua/plenary.nvim",
     },
     config = function()
-      require("config.neogit")
+      require("config.neogit").setup()
     end,
   })
-  use({ "f-person/git-blame.nvim" })
 
   use({
-    "norcalli/nvim-colorizer.lua",
-    event = "BufReadPre",
+    "akinsho/git-conflict.nvim",
     config = function()
-      require("config.colorizer")
+      require("config.conflict").setup()
     end,
   })
+
+  use({ "f-person/git-blame.nvim" })
 
   -- Writing
   use({
@@ -391,6 +424,8 @@ local function plugins(use)
     ft = "markdown",
     cmd = { "MarkdownPreview" },
   })
+
+  use({ "jxnblk/vim-mdx-js" })
 
   use({
     "phaazon/hop.nvim",
@@ -408,22 +443,22 @@ local function plugins(use)
     "ggandor/lightspeed.nvim",
     keys = { "s", "S", "f", "F", "t", "T" },
     config = function()
-      require("config.lightspeed")
+      require("config.lightspeed").setup()
     end,
   })
 
-  use({
-    "folke/trouble.nvim",
-    event = "BufReadPre",
-    wants = "nvim-web-devicons",
-    cmd = { "TroubleToggle", "Trouble" },
-    config = function()
-      require("trouble").setup({
-        auto_open = false,
-        mode = "document_diagnostics",
-      })
-    end,
-  })
+  -- use({
+  --   "folke/trouble.nvim",
+  --   event = "BufReadPre",
+  --   wants = "nvim-web-devicons",
+  --   cmd = { "TroubleToggle", "Trouble" },
+  --   config = function()
+  --     require("trouble").setup({
+  --       auto_open = false,
+  --       mode = "document_diagnostics",
+  --     })
+  --   end,
+  -- })
 
   use({
     "folke/persistence.nvim",
@@ -445,18 +480,23 @@ local function plugins(use)
     wants = "twilight.nvim",
     requires = { "folke/twilight.nvim" },
     config = function()
-      require("zen-mode").setup({
-        plugins = { gitsigns = true, kitty = { enabled = true, font = "+2" } },
-      })
+      require("config.zen").setup()
+    end,
+  })
+
+  use({
+    "norcalli/nvim-colorizer.lua",
+    event = "BufReadPre",
+    config = function()
+      require("config.colorizer").setup()
     end,
   })
 
   use({
     "folke/todo-comments.nvim",
-    cmd = { "TodoTrouble", "TodoTelescope" },
     event = "BufReadPost",
     config = function()
-      require("config.todo")
+      require("config.todo").setup()
     end,
   })
 
@@ -473,8 +513,7 @@ local function plugins(use)
     event = "CursorHold",
     module = "illuminate",
     config = function()
-      vim.g.Illuminate_delay = 1000
-      vim.g.Illuminate_ftblacklist = { "lir", "nvimtree" }
+      require("config.illuminate").setup()
     end,
   })
 
@@ -483,9 +522,22 @@ local function plugins(use)
     event = "CursorMoved",
   })
 
+  -- qf/loc list helpers
   use({
-    "knubie/vim-kitty-navigator",
-    run = { "cp *.py $HOME/.config/kitty" },
+    "stevearc/qf_helper.nvim",
+    config = function()
+      require("config.qfhelper").setup()
+    end,
+  })
+
+  -- buffer cycle
+  use({
+    "ghillb/cybu.nvim",
+    branch = "main", -- timely updates
+    requires = { "kyazdani42/nvim-web-devicons" },
+    config = function()
+      require("config.cybu").setup()
+    end,
   })
 end
 

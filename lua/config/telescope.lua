@@ -1,26 +1,5 @@
 local trouble = require("trouble.providers.telescope")
-
 local telescope = require("telescope")
-
-telescope.setup({
-  extensions = {
-    -- fzy_native = {
-    --  override_generic_sorter = false,
-    --  override_file_sorter = true,
-    --},
-  },
-  defaults = {
-    mappings = { i = { ["<c-t>"] = trouble.open_with_trouble } },
-    prompt_prefix = "❯ ",
-    selection_caret = " ",
-    winblend = 5,
-    layout_strategy = "flex",
-  },
-})
-
--- telescope.load_extension("fzy_native")
-require("telescope").load_extension("fzf")
-telescope.load_extension("gh")
 
 local M = {}
 
@@ -41,13 +20,45 @@ M.project_files = function(opts)
   require("telescope.builtin").git_files(opts)
 end
 
-local util = require("util")
 
-util.nnoremap("<Leader><Space>", M.project_files)
-util.nnoremap("<Leader>fd", function()
-  require("telescope.builtin").git_files({
-    cwd = "~/.config/nvim",
+
+function M.setup()
+  telescope.setup({
+    extensions = {
+      fzf = {
+        fuzzy = true,
+        override_generic_sorter = true,
+        override_file_sorter = true,
+        case_mode = "smart_case",
+      },
+    },
+    defaults = {
+      layout_strategy = "vertical",
+      mappings = {
+        i = { ["<c-t>"] = trouble.open_with_trouble },
+        n = { ["<c-t>"] = trouble.open_with_trouble },
+      },
+      prompt_prefix = "❯ ",
+      selection_caret = " ",
+      winblend = 5,
+    },
   })
-end)
+
+  require("telescope").load_extension("fzf")
+  telescope.load_extension("gh")
+
+  local util = require("util")
+
+  util.nnoremap("<Leader><Space>", "<cmd>Telescope find_files<cr>")
+  util.nnoremap("<Leader>fh", "<cmd>Telescope find_files hidden=true<cr>")
+
+  util.nnoremap("<Leader>fp", M.project_files)
+  util.nnoremap("<Leader>fd", function()
+    require("telescope.builtin").git_files({
+      cwd = "~/.config/nvim",
+    })
+  end)
+
+end
 
 return M

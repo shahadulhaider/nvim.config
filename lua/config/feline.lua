@@ -1,5 +1,13 @@
-local vi_mode_utils = require("feline.providers.vi_mode")
-local theme_colors = require("tokyonight.colors").setup()
+local M = {}
+local api = vim.api
+local fn = vim.fn
+local bo = vim.bo
+
+local feline = require("feline")
+local vi_mode = require("feline.providers.vi_mode")
+local git = require("feline.providers.git")
+local theme_colors = require("tokyonight.colors").setup({})
+local navic = require("nvim-navic")
 
 local colors = {
   bg = theme_colors.bg_dark,
@@ -41,15 +49,15 @@ components.active[1] = {
   {
     provider = "▊ ",
     hl = {
-      fg = "skyblue",
+      fg = "blue",
     },
   },
   {
     provider = "vi_mode",
     hl = function()
       return {
-        name = vi_mode_utils.get_mode_highlight_name(),
-        fg = vi_mode_utils.get_mode_color(),
+        name = vi_mode.get_mode_highlight_name(),
+        fg = vi_mode.get_mode_color(),
         style = "bold",
       }
     end,
@@ -57,53 +65,23 @@ components.active[1] = {
     icon = "",
   },
   {
-    provider = {
-      name = "file_info",
-      opts = {
-        type = "relative",
-      },
-    },
-    hl = {
-      fg = "white",
-      bg = "oceanblue",
-      style = "bold",
-    },
-    left_sep = {
-      "slant_left_2",
-      { str = " ", hl = { bg = "oceanblue", fg = "NONE" } },
-    },
-    right_sep = {
-      { str = " ", hl = { bg = "oceanblue", fg = "NONE" } },
-      "slant_right_2",
-      " ",
-    },
-  },
-  {
-    provider = "file_size",
-    right_sep = {
-      " ",
-      {
-        str = "vertical_bar_thin",
-        hl = {
-          fg = "fg",
-          bg = "bg",
-        },
-      },
-    },
-  },
-  {
-    provider = "position",
+    provider = "git_branch",
     left_sep = " ",
-    right_sep = {
-      " ",
-      {
-        str = "vertical_bar_thin",
-        hl = {
-          fg = "fg",
-          bg = "bg",
-        },
+    right_sep = " ",
+  },
+  {
+    enabled = function()
+      return vim.bo.filetype ~= ""
+    end,
+    provider = {
+      name = "file_type",
+      opts = {
+        filetype_icon = true,
+        colored_icon = true,
       },
     },
+    left_sep = " ",
+    right_sep = " ",
   },
   {
     provider = "diagnostic_errors",
@@ -122,65 +100,28 @@ components.active[1] = {
     hl = { fg = "skyblue" },
   },
 }
-
 components.active[2] = {
   {
-    provider = "git_branch",
-    hl = {
-      fg = "white",
-      style = "bold",
-    },
+    provider = "position_custom",
+    right_sep = " ",
   },
   {
     provider = "git_diff_added",
-    hl = {
-      fg = "green",
-    },
+    hl = { fg = "green" },
   },
   {
     provider = "git_diff_changed",
-    hl = {
-      fg = "orange",
-    },
+    hl = { fg = "orange" },
   },
   {
     provider = "git_diff_removed",
-    hl = {
-      fg = "red",
-    },
+    hl = { fg = "red" },
   },
   {
-    provider = "file_type",
-    hl = {
-      fg = "fg",
-      bg = "bg",
-      style = "bold",
-    },
-    left_sep = {
-      str = " ",
-      hl = {
-        fg = "NONE",
-        bg = "bg",
-      },
-    },
-    right_sep = {
-      {
-        str = " ",
-        hl = {
-          fg = "NONE",
-          bg = "bg",
-        },
-      },
-      " ",
-    },
-  },
-  {
-    provider = "line_percentage",
-    hl = {
-      style = "bold",
-    },
-    left_sep = "  ",
-    right_sep = " ",
+    enabled = function()
+      return git.git_info_exists()
+    end,
+    right_sep = { str = " ", always_visible = true },
   },
   {
     provider = "scroll_bar",
@@ -191,13 +132,151 @@ components.active[2] = {
   },
 }
 
-components.inactive[1] = {
-  -- Empty component to fix the highlight till the end of the statusline
-  {},
-}
-
-require("feline").setup({
+feline.setup({
   components = components,
   vi_mode_colors = vi_mode_colors,
   theme = colors,
+  force_inactive = {
+    filetypes = {
+      "^NvimTree$",
+      "^packer$",
+      "^startify$",
+      "^fugitive$",
+      "^fugitiveblame$",
+      "^qf$",
+      "^help$",
+      "^TelescopePrompt$",
+    },
+    buftypes = {
+      "^terminal$",
+      "^nofile$",
+    },
+  },
+  custom_providers = {
+    position_custom = function()
+      local line, col = unpack(api.nvim_win_get_cursor(0))
+      col = vim.str_utfindex(api.nvim_get_current_line(), col) + 1
+
+      return string.format("Ln %d, Col %d", line, col)
+    end,
+    relative_file_path_parts = function()
+      local filename = api.nvim_buf_get_name(0)
+      if filename == "" then
+        return " "
+      end
+      local fileparts = fn.fnamemodify(filename, ":~:.:h")
+      if fileparts == "." then
+        return " "
+      end
+      return fn.fnamemodify(fileparts, ":gs?/? ❯ ?") .. " ❯ "
+    end,
+    file_info_custom = function()
+      local readonly_str, modified_str, icon
+
+      local icon_str, icon_color = require("nvim-web-devicons").get_icon_color(
+        fn.expand("%:t"),
+        nil, -- extension is already computed by nvim-web-devicons
+        { default = true }
+      )
+
+      icon = { str = icon_str, hl = { fg = icon_color } }
+
+      local filename = api.nvim_buf_get_name(0)
+      if filename == "" then
+        filename = "[No Name]"
+      else
+        filename = fn.fnamemodify(filename, ":t")
+      end
+
+      if bo.readonly then
+        readonly_str = "🔒"
+      else
+        readonly_str = ""
+      end
+
+      -- Add a space at the beginning of the provider if there is an icon
+      if icon and icon ~= "" then
+        readonly_str = " " .. readonly_str
+      end
+
+      if bo.modified then
+        modified_str = "●"
+
+        if modified_str ~= "" then
+          modified_str = " " .. modified_str
+        end
+      else
+        modified_str = ""
+      end
+
+      -- escape any special statusline characters in the filename
+      filename = filename:gsub("%%", "%%%%")
+      return string.format("%s%s%s", readonly_str, filename, modified_str), icon
+    end,
+  },
 })
+
+local winbar_components = {
+  active = {
+    {
+      { provider = " " },
+      {
+        provider = "relative_file_path_parts",
+        enabled = function()
+          return bo.buftype ~= "terminal" and bo.buftype ~= "nofile"
+        end,
+      },
+      {
+        provider = "file_info_custom",
+      },
+      {
+        provider = function()
+          local location = navic.get_location()
+          if location ~= "" then
+            return " ❯ " .. location
+          end
+          return ""
+        end,
+        enabled = function()
+          return navic.is_available()
+            and bo.buftype ~= "terminal"
+            and bo.buftype ~= "nofile"
+        end,
+      },
+    },
+  },
+  inactive = {
+    {
+      {
+        provider = "relative_file_path_parts",
+        enabled = function()
+          return bo.buftype ~= "terminal" and bo.buftype ~= "nofile"
+        end,
+        left_sep = " ",
+        hl = {
+          fg = theme_colors.dark5,
+        },
+      },
+      {
+        provider = "file_info_custom",
+        hl = {
+          fg = theme_colors.dark5,
+        },
+      },
+    },
+  },
+}
+
+function M.setup()
+  feline.winbar.setup({
+    components = winbar_components,
+    disable = {
+      filetypes = {
+        "^NvimTree$",
+        "^lir$",
+      },
+    },
+  })
+end
+
+return M
