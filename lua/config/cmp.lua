@@ -14,6 +14,14 @@ function M.setup()
       end,
     },
     mapping = {
+      ["<Down>"] = cmp.mapping(
+        cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+        { "i" }
+      ),
+      ["<Up>"] = cmp.mapping(
+        cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+        { "i" }
+      ),
       ["<CR>"] = cmp.mapping.confirm(),
       ["<C-Space>"] = cmp.mapping.complete(),
       ["<C-y>"] = cmp.mapping.confirm({ select = true }),
@@ -24,8 +32,8 @@ function M.setup()
           fallback()
         end
       end, {
-      "i",
-      "s",
+        "i",
+        "s",
       }),
       ["<S-Tab>"] = cmp.mapping(function(fallback)
         if luasnip.jumpable(-1) then
@@ -34,8 +42,8 @@ function M.setup()
           fallback()
         end
       end, {
-      "i",
-      "s",
+        "i",
+        "s",
       }),
     },
     sources = cmp.config.sources({
