@@ -15,7 +15,7 @@ end
 
 function M.format()
   if M.autoformat then
-    vim.lsp.buf.formatting_sync()
+    vim.lsp.format()
   end
 end
 
@@ -36,18 +36,21 @@ function M.setup(client, buf)
       end
     else
       enable = not (client.name == "null-ls")
+        and client.supports_method("textDocument/formatting")
     end
   end
 
-  client.resolved_capabilities.document_formatting = enable
+  client.server_capabilities.document_formatting = enable
   -- format on save
   if enable then
-    vim.cmd([[
-      augroup LspFormat
-        autocmd! * <buffer>
-        autocmd BufWritePre <buffer> lua require("config.lsp.formatting").format()
-      augroup END
-    ]])
+    local group = vim.api.nvim_create_augroup("lsp-format", { clear = true })
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      buffer = 0,
+      callback = function()
+        require("config.lsp.formatting").format()
+      end,
+      group = group,
+    })
   end
 end
 

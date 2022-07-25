@@ -110,7 +110,7 @@ local leader = {
     ["s"] = { "<C-W>s", "split-window-below" },
     ["v"] = { "<C-W>v", "split-window-right" },
   },
-  c = { o = { "<cmd>SymbolsOutline<cr>", "Symbols Outline" } },
+  c = { O = { "<cmd>SymbolsOutline<cr>", "Symbols Outline" } },
   b = {
     name = "+buffer",
     ["b"] = { "<cmd>:e #<cr>", "Switch to Other Buffer" },
@@ -262,7 +262,7 @@ local leader = {
   },
   l = {
     name = "+{qf,loc}list",
-    l = { "<cmd>QFToggle!<CR>", "Toggle qf list" },
+    q = { "<cmd>QFToggle!<CR>", "Toggle qf list" },
     l = { "<cmd>LLToggle!<CR>", "Toggle loc list" },
     n = { "<cmd>QNext<CR>", "Next item on the qf/loc list" },
     p = { "<cmd>QPrev<CR>", "Prev item on the qf/loc list" },
