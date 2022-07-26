@@ -15,7 +15,7 @@ end
 
 function M.format()
   if M.autoformat then
-    vim.lsp.format()
+    vim.lsp.buf.format()
   end
 end
 

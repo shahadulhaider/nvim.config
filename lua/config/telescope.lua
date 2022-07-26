@@ -20,8 +20,6 @@ M.project_files = function(opts)
   require("telescope.builtin").git_files(opts)
 end
 
-
-
 function M.setup()
   telescope.setup({
     extensions = {
@@ -58,7 +56,6 @@ function M.setup()
       cwd = "~/.config/nvim",
     })
   end)
-
 end
 
 return M
