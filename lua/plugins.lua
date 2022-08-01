@@ -125,7 +125,7 @@ local function plugins(use)
       {
         "abecodes/tabout.nvim",
         config = function()
-          require("tabout").setup()
+          require("tabout").setup({})
         end,
         wants = { "nvim-treesitter" },
       },
@@ -139,12 +139,13 @@ local function plugins(use)
   })
 
   -- surround selections
-  use({
-    "kylechui/nvim-surround",
-    config = function()
-      require("config.surround").setup()
-    end,
-  })
+  -- use({
+  --   "kylechui/nvim-surround",
+  --   config = function()
+  --     require("config.surround").setup()
+  --   end,
+  -- })
+  use({ "tpope/vim-surround" })
 
   -- treesitter
   use({
