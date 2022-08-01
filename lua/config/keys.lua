@@ -1,6 +1,16 @@
 local wk = require("which-key")
 local util = require("util")
 
+-- local show = wk.show
+-- wk.show = function(keys, opts)
+--   if vim.bo.filetype == "TelescopePrompt" then
+--     local map = "<c-r>"
+--     local key = vim.api.nvim_replace_termcodes(map, true, false, true)
+--     vim.api.nvim_feedkeys(key, "i", true)
+--   end
+--   show(keys, opts)
+-- end
+
 vim.o.timeoutlen = 300
 
 local presets = require("which-key.plugins.presets")
