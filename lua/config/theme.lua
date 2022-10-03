@@ -46,4 +46,16 @@ vim.g.tokyonight_dark_sidebar = true
 vim.g.tokyonight_dark_float = true
 vim.g.tokyonight_colors = {}
 
-require("tokyonight").colorscheme()
+-- vim.g.neon_style = "dark"
+-- vim.g.neon_bold = false
+-- vim.g.neon_transparent = true
+
+-- require("tokyonight").colorscheme()
+
+-- vim.cmd([[colorscheme sherbet]])
+--
+vim.g.catppuccin_flavour = "macchiato" -- latte, frappe, macchiato, mocha
+
+require("catppuccin").setup()
+
+vim.cmd([[colorscheme catppuccin]])

@@ -1,5 +1,6 @@
 local trouble = require("trouble.providers.telescope")
 local telescope = require("telescope")
+local actions = require("telescope.actions")
 
 local M = {}
 
@@ -29,12 +30,26 @@ function M.setup()
         override_file_sorter = true,
         case_mode = "smart_case",
       },
+      file_browser = {
+        theme = "ivy",
+      },
     },
     defaults = {
-      layout_strategy = "vertical",
+      -- layout_strategy = "flex",
+      layout_config = {
+        anchor = "N",
+        prompt_position = "top",
+      },
+      sorting_strategy = "ascending",
       mappings = {
-        i = { ["<c-t>"] = trouble.open_with_trouble },
-        n = { ["<c-t>"] = trouble.open_with_trouble },
+        i = {
+          ["<esc>"] = actions.close,
+          ["<c-t>"] = trouble.open_with_trouble,
+          ["<C-u>"] = false,
+        },
+        n = {
+          ["<c-t>"] = trouble.open_with_trouble,
+        },
       },
       prompt_prefix = "❯ ",
       selection_caret = " ",
@@ -43,6 +58,7 @@ function M.setup()
   })
 
   require("telescope").load_extension("fzf")
+  require("telescope").load_extension("file_browser")
   telescope.load_extension("gh")
 
   local util = require("util")
@@ -51,6 +67,11 @@ function M.setup()
   util.nnoremap("<Leader>fh", "<cmd>Telescope find_files hidden=true<cr>")
 
   util.nnoremap("<Leader>fp", M.project_files)
+  util.nnoremap("<Leader>.", function()
+    require("telescope.builtin").find_files({
+      cwd = vim.fn.expand("%:p:h", "."),
+    })
+  end)
   util.nnoremap("<Leader>fd", function()
     require("telescope.builtin").git_files({
       cwd = "~/.config/nvim",

@@ -189,11 +189,12 @@ local leader = {
     g = { "<cmd>NvimTreeFindFile<cr>", "NvimTree Current File" },
     t = { "<cmd>NvimTreeToggle<cr>", "NvimTree" },
     f = { "<cmd>Telescope find_files<cr>", "Find File" },
+    b = { "<cmd>Telescope file_browser<cr>", "File Browser" },
     r = { "<cmd>Telescope oldfiles<cr>", "Open Recent File" },
     n = { "<cmd>enew<cr>", "New File" },
     c = { "<cmd>let @*=expand('%')<cr>", "Copy relative path" },
     C = { "<cmd>let @*=expand('%:p')<cr>", "Copy absolute path" },
-    d = "Dot Files",
+    p = "Config Files",
   },
   o = {
     name = "+open",

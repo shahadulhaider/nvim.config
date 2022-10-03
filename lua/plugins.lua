@@ -52,6 +52,18 @@ local function plugins(use)
           require("config.navic").setup()
         end,
       },
+      -- {
+      --   "williamboman/mason.nvim",
+      --   config = function()
+      --     require("mason").setup()
+      --   end,
+      -- },
+      -- {
+      --   "williamboman/mason-lspconfig.nvim",
+      --   config = function()
+      --     require("mason-lspconfig").setup()
+      --   end,
+      -- },
       "simrat39/rust-tools.nvim",
       "mfussenegger/nvim-dap",
       "mattn/webapi-vim",
@@ -187,14 +199,23 @@ local function plugins(use)
   })
 
   -- Theme: colors
+  use("rafamadriz/neon")
+  use("Mofiqul/vscode.nvim")
+  use("RRethy/nvim-base16")
+  use("olimorris/onedarkpro.nvim")
+  use({ "rockyzhang24/arctic.nvim", requires = { "rktjmp/lush.nvim" } })
+  use("lewpoly/sherbet.nvim")
+  use("EdenEast/nightfox.nvim")
+  use("savq/melange")
+
   use({
     "folke/tokyonight.nvim",
     config = function()
       require("config.theme")
     end,
   })
-
-  use("lewpoly/sherbet.nvim")
+  use({ "catppuccin/nvim", as = "catppuccin" })
+  use("Mofiqul/adwaita.nvim")
 
   -- Theme: icons
   use({
@@ -288,6 +309,7 @@ local function plugins(use)
       "trouble.nvim",
       "telescope-symbols.nvim",
       "telescope-github.nvim",
+      "telescope-file-browser.nvim",
     },
     requires = {
       "nvim-lua/popup.nvim",
@@ -296,6 +318,7 @@ local function plugins(use)
       -- "nvim-telescope/telescope-fzy-native.nvim",
       { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
       "nvim-telescope/telescope-github.nvim",
+      "nvim-telescope/telescope-file-browser.nvim",
     },
   })
 

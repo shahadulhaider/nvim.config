@@ -49,14 +49,14 @@ local servers = {
   sumneko_lua = require("lua-dev").setup({
     lspconfig = {
       cmd = {
-        "/usr/lib/lua-language-server/bin/lua-language-server",
+        "/home/msh/lua-language-server/bin/lua-language-server",
         "-E",
-        "/usr/lib/lua-language-server/main.lua",
+        "/home/msh/lua-language-server/bin/main.lua",
       },
     },
   }),
   vimls = {},
-  terraformls = {},
+  -- terraformls = {},
   yamlls = {},
 }
 
