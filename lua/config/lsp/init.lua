@@ -46,14 +46,14 @@ local servers = {
   },
   clangd = {},
   gopls = {},
-  sumneko_lua = require("lua-dev").setup({
-    lspconfig = {
-      cmd = {
-        "/home/msh/lua-language-server/bin/lua-language-server",
-        "-E",
-        "/home/msh/lua-language-server/bin/main.lua",
-      },
-    },
+  sumneko_lua = require("neodev").setup({
+    -- lspconfig = {
+    --   cmd = {
+    --     "/home/msh/lua-language-server/bin/lua-language-server",
+    --     "-E",
+    --     "/home/msh/lua-language-server/bin/main.lua",
+    --   },
+    -- },
   }),
   vimls = {},
   -- terraformls = {},
@@ -61,7 +61,7 @@ local servers = {
 }
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
 local server_opts = {
   on_attach = on_attach,
