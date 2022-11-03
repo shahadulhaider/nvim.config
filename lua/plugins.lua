@@ -5,11 +5,11 @@ local config = {
     enable = false,
     threshold = 0, -- the amount in ms that a plugins load time must be over for it to be included in the profile
   },
-  -- display = {
-  --   open_fn = function()
-  --     return require("packer.util").float({ border = "single" })
-  --   end,
-  -- },
+  display = {
+    open_fn = function()
+      return require("packer.util").float({ border = "single" })
+    end,
+  },
 }
 
 local function plugins(use)
@@ -40,7 +40,7 @@ local function plugins(use)
     wants = {
       "nvim-lsp-ts-utils",
       "null-ls.nvim",
-      "lua-dev.nvim",
+      "neodev.nvim",
     },
     config = function()
       require("config.lsp")
@@ -69,7 +69,7 @@ local function plugins(use)
       "mattn/webapi-vim",
       "jose-elias-alvarez/nvim-lsp-ts-utils",
       "jose-elias-alvarez/null-ls.nvim",
-      "folke/lua-dev.nvim",
+      "folke/neodev.nvim",
       "hrsh7th/cmp-nvim-lsp",
       "b0o/schemastore.nvim",
       "ray-x/lsp_signature.nvim",
@@ -109,14 +109,18 @@ local function plugins(use)
     end,
     wants = { "tabout.nvim", "LuaSnip", "nvim-autopairs", "plenary.nvim" },
     requires = {
+      "hrsh7th/cmp-nvim-lsp",
+      "saadparwaiz1/cmp_luasnip",
+      "hrsh7th/cmp-path",
+      "petertriho/cmp-git",
+      "hrsh7th/cmp-buffer",
+      -- "tzachar/cmp-fuzzy-buffer",
+      -- "tzachar/cmp-fuzzy-path",
+      "hrsh7th/cmp-nvim-lua",
+      "lukas-reineke/cmp-rg",
       "f3fora/cmp-spell",
       "hrsh7th/cmp-emoji",
-      "hrsh7th/cmp-path",
-      "saadparwaiz1/cmp_luasnip",
-      "hrsh7th/cmp-nvim-lua",
       "hrsh7th/cmp-calc",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-nvim-lsp",
       "David-Kunz/cmp-npm",
       -- "hrsh7th/cmp-copilot",
       -- "github/copilot.vim",
@@ -149,6 +153,8 @@ local function plugins(use)
       },
     },
   })
+
+  -- Language tools
 
   -- surround selections
   -- use({
